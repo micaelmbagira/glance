@@ -59,6 +59,7 @@ def is_novabase(obj):
 
 def get_single_object(tablename, id, desimplify=True, request_uuid=None):
 
+#TODO desimplifier ?
     try:
         from desimplifier import ObjectDesimplifier
     except:
@@ -209,6 +210,7 @@ class ReloadableRelationMixin(models.ModelBase):
     def update_foreign_keys(self, request_uuid=uuid.uuid1()):
         """Update foreign keys according to local fields' values."""
 
+# TODO lazy_reference ?
         from lazy_reference import LazyReference
 
         if hasattr(self, "metadata"):
@@ -237,6 +239,8 @@ class ReloadableRelationMixin(models.ModelBase):
                         setattr(self, local_field_name, remote_field_value)
                     except Exception as e:
                         pass
+
+    #TODO desimplifier ?
         try:
             from desimplifier import ObjectDesimplifier
         except:
