@@ -52,6 +52,14 @@ from glance.db.sqlalchemy.metadef_api import tag as metadef_tag_api
 from glance.db.sqlalchemy import models
 from glance import i18n
 
+# Rome
+from lib.rome.core.orm.query import or_
+from lib.rome.core.orm.query import and_
+from lib.rome.core.orm.query import Query as RomeQuery
+from lib.rome.core.session.session import Session as RomeSession
+from lib.rome.core.session.session import OldSession as OldRomeSession
+from lib.rome.core.session.session import SessionDeadlock
+
 BASE = models.BASE
 sa_logger = None
 LOG = logging.getLogger(__name__)
@@ -97,11 +105,13 @@ def get_engine():
     return facade.get_engine()
 
 
-def get_session(autocommit=True, expire_on_commit=False):
-    facade = _create_facade_lazily()
-    return facade.get_session(autocommit=autocommit,
-                              expire_on_commit=expire_on_commit)
+#def get_session(autocommit=True, expire_on_commit=False):
+#    facade = _create_facade_lazily()
+#    return facade.get_session(autocommit=autocommit,
+#                              expire_on_commit=expire_on_commit)
 
+def get_session(use_slave = False, **kwargs):
+    return RomeSession()
 
 def clear_db_env():
     """
