@@ -21,10 +21,9 @@ from oslo_config import cfg
 from oslo_db import exception as db_exc
 from oslo_utils import timeutils
 import sqlalchemy
-#from sqlalchemy import and_
-    #TODO check if case is noSQL
+from sqlalchemy import and_
 from sqlalchemy import case
-#from sqlalchemy import or_
+from sqlalchemy import or_
 import sqlalchemy.orm as orm
 from sqlalchemy.orm import joinedload
 
@@ -34,9 +33,6 @@ from glance.common import semver_db
 from glance.db.sqlalchemy import models_artifacts as models
 from glance import i18n
 from oslo_log import log as os_logging
-
-from glance.db.discovery.query import and_
-from glance.db.discovery.query import and_
 
 LOG = os_logging.getLogger(__name__)
 _LW = i18n._LW

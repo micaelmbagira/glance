@@ -17,12 +17,10 @@ import re
 
 from migrate.changeset import UniqueConstraint
 from oslo_db import exception as db_exception
-#from sqlalchemy import and_
-from sqlalchemy import func, orm
+from sqlalchemy import and_, func, orm
 from sqlalchemy import MetaData, Table
 from sqlalchemy.exc import OperationalError, ProgrammingError
 
-from glance.db.discovery.query import and_
 
 NEW_KEYNAME = 'image_members_image_id_member_deleted_at_key'
 ORIGINAL_KEYNAME_RE = re.compile('image_members_image_id.*_key')

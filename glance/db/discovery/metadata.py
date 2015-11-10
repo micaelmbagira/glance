@@ -29,13 +29,11 @@ from oslo_utils import encodeutils
 from oslo_utils import timeutils
 import six
 import sqlalchemy
-#from sqlalchemy import and_
+from sqlalchemy import and_
 from sqlalchemy.schema import MetaData
 from sqlalchemy.sql import select
 
 from glance import i18n
-
-from glance.db.discovery.query import and_
 
 LOG = logging.getLogger(__name__)
 _ = i18n._

@@ -72,11 +72,9 @@ class GlanceBase(models.ModelBase, models.TimestampMixin):
     __protected_attributes__ = set([
         "created_at", "updated_at", "deleted_at", "deleted"])
 
-#TODO save ina noSQLway
-
     def save(self, session=None):
-    #    from glance.db.sqlalchemy import api as db_api
-    #    super(GlanceBase, self).save(session or db_api.get_session())
+        from glance.db.sqlalchemy import api as db_api
+        super(GlanceBase, self).save(session or db_api.get_session())
 
     created_at = Column(DateTime, default=lambda: timeutils.utcnow(),
                         nullable=False)

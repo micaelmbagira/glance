@@ -55,11 +55,10 @@ class ArtifactBase(models.ModelBase, models.TimestampMixin):
     updated_at = Column(DateTime, default=lambda: timeutils.utcnow(),
                         nullable=False, onupdate=lambda: timeutils.utcnow())
 
-#TODO save in a noSQL way
-
     def save(self, session=None):
-        #from glance.db.sqlalchemy import api as db_api
-        #super(ArtifactBase, self).save(session or db_api.get_session())
+        from glance.db.sqlalchemy import api as db_api
+
+        super(ArtifactBase, self).save(session or db_api.get_session())
 
     def keys(self):
         return self.__dict__.keys()
