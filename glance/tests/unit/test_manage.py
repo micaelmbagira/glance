@@ -20,8 +20,8 @@ from six.moves import StringIO
 
 from glance.cmd import manage
 from glance.db import migration as db_migration
-from glance.db.sqlalchemy import api as db_api
-from glance.db.sqlalchemy import metadata as db_metadata
+from glance.db.discovery import api as db_api
+from glance.db.discovery import metadata as db_metadata
 from glance.tests import utils as test_utils
 
 

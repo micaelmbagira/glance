@@ -18,10 +18,10 @@ from oslo_log import log as logging
 import sqlalchemy.orm as sa_orm
 
 from glance.common import exception as exc
-from glance.db.sqlalchemy.metadef_api import namespace as namespace_api
-from glance.db.sqlalchemy.metadef_api import resource_type as resource_type_api
-from glance.db.sqlalchemy.metadef_api import utils as metadef_utils
-from glance.db.sqlalchemy import models_metadef as models
+from glance.db.discovery.metadef_api import namespace as namespace_api
+from glance.db.discovery.metadef_api import resource_type as resource_type_api
+from glance.db.discovery.metadef_api import utils as metadef_utils
+from glance.db.discovery import models_metadef as models
 
 LOG = logging.getLogger(__name__)
 

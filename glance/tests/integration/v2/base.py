@@ -25,7 +25,7 @@ from oslo_db import options
 import glance.common.client
 from glance.common import config
 from glance.db import migration
-import glance.db.sqlalchemy.api
+import glance.db.discovery.api
 import glance.registry.client.v1.client
 from glance import tests as glance_tests
 from glance.tests import utils as test_utils
@@ -162,7 +162,7 @@ class ApiTest(test_utils.BaseTestCase):
         sql_connection = 'sqlite:////%s/tests.sqlite' % self.test_dir
         options.set_defaults(CONF, connection=sql_connection,
                              sqlite_db='glance.sqlite')
-        glance.db.sqlalchemy.api.clear_db_env()
+        glance.db.discovery.api.clear_db_env()
         glance_db_env = 'GLANCE_DB_TEST_SQLITE_FILE'
         if glance_db_env in os.environ:
             # use the empty db created and cached as a tempfile
@@ -219,5 +219,5 @@ class ApiTest(test_utils.BaseTestCase):
                        'get_connection_type', get_connection_type)
 
     def tearDown(self):
-        glance.db.sqlalchemy.api.clear_db_env()
+        glance.db.discovery.api.clear_db_env()
         super(ApiTest, self).tearDown()

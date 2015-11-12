@@ -13,15 +13,15 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import sqlalchemy
-from sqlalchemy import func
-from sqlalchemy import orm
-from sqlalchemy import sql
-from sqlalchemy import Table
+import discovery
+from discovery import func
+from discovery import orm
+from discovery import sql
+from discovery import Table
 
 
 def upgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
     image_locations = Table('image_locations', meta, autoload=True)
 
     if migrate_engine.name == "ibm_db_sa":

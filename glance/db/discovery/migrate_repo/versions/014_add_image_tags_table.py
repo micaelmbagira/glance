@@ -13,9 +13,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from sqlalchemy import schema
+from discovery import schema
 
-from glance.db.sqlalchemy.migrate_repo import schema as glance_schema
+from glance.db.discovery.migrate_repo import schema as glance_schema
 
 
 def define_image_tags_table(meta):

@@ -30,7 +30,7 @@ from sqlalchemy import String
 from sqlalchemy import Text
 from sqlalchemy import UniqueConstraint
 
-from glance.db.sqlalchemy.models import JSONEncodedDict
+from glance.db.discovery.models import JSONEncodedDict
 
 
 class DictionaryBase(models.ModelBase):

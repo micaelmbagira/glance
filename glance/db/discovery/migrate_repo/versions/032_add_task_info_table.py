@@ -13,9 +13,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from sqlalchemy.schema import (Column, ForeignKey, MetaData, Table)
+from discovery.schema import (Column, ForeignKey, MetaData, Table)
 
-from glance.db.sqlalchemy.migrate_repo.schema import (String,
+from glance.db.discovery.migrate_repo.schema import (String,
                                                       Text,
                                                       create_tables,
                                                       drop_tables)  # noqa

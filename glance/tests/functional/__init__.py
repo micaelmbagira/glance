@@ -41,7 +41,7 @@ import six.moves.urllib.parse as urlparse
 import testtools
 
 from glance.common import utils
-from glance.db.sqlalchemy import api as db_api
+from glance.db.discovery import api as db_api
 from glance import tests as glance_tests
 from glance.tests import utils as test_utils
 

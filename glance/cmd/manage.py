@@ -47,8 +47,8 @@ import six
 from glance.common import config
 from glance.common import exception
 from glance.db import migration as db_migration
-from glance.db.sqlalchemy import api as db_api
-from glance.db.sqlalchemy import metadata
+from glance.db.discovery import api as db_api
+from glance.db.discovery import metadata
 from glance import i18n
 
 

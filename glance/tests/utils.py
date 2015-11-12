@@ -41,8 +41,8 @@ from glance.common import property_utils
 from glance.common import utils
 from glance.common import wsgi
 from glance import context
-from glance.db.sqlalchemy import api as db_api
-from glance.db.sqlalchemy import models as db_models
+from glance.db.discovery import api as db_api
+from glance.db.discovery import models as db_models
 
 CONF = cfg.CONF
 try:

@@ -13,19 +13,19 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import sqlalchemy
+import discovery
 
 
 def get_images_table(meta):
-    return sqlalchemy.Table('images', meta, autoload=True)
+    return discovery.Table('images', meta, autoload=True)
 
 
 def get_image_locations_table(meta):
-    return sqlalchemy.Table('image_locations', meta, autoload=True)
+    return discovery.Table('image_locations', meta, autoload=True)
 
 
 def upgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
 
     images_table = get_images_table(meta)
     image_locations_table = get_image_locations_table(meta)
@@ -45,7 +45,7 @@ def upgrade(migrate_engine):
 
 
 def downgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
 
     images_table = get_images_table(meta)
     image_locations_table = get_image_locations_table(meta)

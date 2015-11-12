@@ -11,10 +11,10 @@
 #    under the License.
 
 import migrate
-import sqlalchemy
-from sqlalchemy import inspect
-from sqlalchemy import (Table, Index, UniqueConstraint)
-from sqlalchemy.schema import (AddConstraint, DropConstraint)
+import discovery
+from discovery import inspect
+from discovery import (Table, Index, UniqueConstraint)
+from discovery.schema import (AddConstraint, DropConstraint)
 
 
 def _change_db2_unique_constraint(operation_type, constraint_name, *columns):
@@ -25,7 +25,7 @@ def _change_db2_unique_constraint(operation_type, constraint_name, *columns):
 
 
 def upgrade(migrate_engine):
-    meta = sqlalchemy.MetaData()
+    meta = discovery.MetaData()
     meta.bind = migrate_engine
     inspector = inspect(migrate_engine)
 
@@ -197,7 +197,7 @@ def upgrade(migrate_engine):
 
 
 def downgrade(migrate_engine):
-    meta = sqlalchemy.MetaData()
+    meta = discovery.MetaData()
     meta.bind = migrate_engine
     inspector = inspect(migrate_engine)
 
@@ -269,7 +269,7 @@ def downgrade(migrate_engine):
         migrate_engine.execute('alter table temp_ rename to metadef_tags')
 
         # Refresh old metadata for this table
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = migrate_engine
         metadef_tags = Table('metadef_tags', meta, autoload=True)
 

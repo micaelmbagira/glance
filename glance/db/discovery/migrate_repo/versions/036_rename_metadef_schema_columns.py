@@ -12,8 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from sqlalchemy.schema import MetaData
-from sqlalchemy.schema import Table
+from discovery.schema import MetaData
+from discovery.schema import Table
 
 
 def upgrade(migrate_engine):

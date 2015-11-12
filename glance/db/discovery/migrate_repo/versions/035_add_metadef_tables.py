@@ -13,11 +13,11 @@
 #    under the License.
 
 from oslo_utils import timeutils
-import sqlalchemy
-from sqlalchemy.schema import (
+import discovery
+from discovery.schema import (
     Column, ForeignKey, Index, MetaData, Table, UniqueConstraint)  # noqa
 
-from glance.db.sqlalchemy.migrate_repo.schema import (
+from glance.db.discovery.migrate_repo.schema import (
     Boolean, DateTime, Integer, String, Text, create_tables,
     drop_tables)  # noqa
 
@@ -28,7 +28,7 @@ RESOURCE_TYPES = [u'OS::Glance::Image', u'OS::Cinder::Volume',
 
 
 def _get_metadef_resource_types_table(meta):
-    return sqlalchemy.Table('metadef_resource_types', meta, autoload=True)
+    return discovery.Table('metadef_resource_types', meta, autoload=True)
 
 
 def _populate_resource_types(resource_types_table):

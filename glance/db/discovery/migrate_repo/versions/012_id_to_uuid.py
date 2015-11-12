@@ -15,7 +15,7 @@
 #    under the License.
 
 """
-While SQLAlchemy/sqlalchemy-migrate should abstract this correctly,
+While discovery/discovery-migrate should abstract this correctly,
 there are known issues with these libraries so SQLite and non-SQLite
 migrations must be done separately.
 """
@@ -23,18 +23,18 @@ migrations must be done separately.
 import uuid
 
 import migrate
-import sqlalchemy
+import discovery
 
 
-and_ = sqlalchemy.and_
-or_ = sqlalchemy.or_
+and_ = discovery.and_
+or_ = discovery.or_
 
 
 def upgrade(migrate_engine):
     """
     Call the correct dialect-specific upgrade.
     """
-    meta = sqlalchemy.MetaData()
+    meta = discovery.MetaData()
     meta.bind = migrate_engine
 
     t_images = _get_table('images', meta)
@@ -57,7 +57,7 @@ def downgrade(migrate_engine):
     """
     Call the correct dialect-specific downgrade.
     """
-    meta = sqlalchemy.MetaData()
+    meta = discovery.MetaData()
     meta.bind = migrate_engine
 
     t_images = _get_table('images', meta)
@@ -150,70 +150,70 @@ def _upgrade_db2(meta, t_images, t_image_members, t_image_properties):
     """
     Upgrade for DB2.
     """
-    t_images.c.id.alter(sqlalchemy.String(36), primary_key=True)
+    t_images.c.id.alter(discovery.String(36), primary_key=True)
 
-    image_members_backup = sqlalchemy.Table(
+    image_members_backup = discovery.Table(
         'image_members_backup',
         meta,
-        sqlalchemy.Column('id',
-                          sqlalchemy.Integer(),
+        discovery.Column('id',
+                          discovery.Integer(),
                           primary_key=True,
                           nullable=False),
-        sqlalchemy.Column('image_id',
-                          sqlalchemy.String(36),
+        discovery.Column('image_id',
+                          discovery.String(36),
                           nullable=False,
                           index=True),
-        sqlalchemy.Column('member',
-                          sqlalchemy.String(255),
+        discovery.Column('member',
+                          discovery.String(255),
                           nullable=False),
-        sqlalchemy.Column('can_share',
-                          sqlalchemy.Boolean(),
+        discovery.Column('can_share',
+                          discovery.Boolean(),
                           nullable=False,
                           default=False),
-        sqlalchemy.Column('created_at',
-                          sqlalchemy.DateTime(),
+        discovery.Column('created_at',
+                          discovery.DateTime(),
                           nullable=False),
-        sqlalchemy.Column('updated_at',
-                          sqlalchemy.DateTime()),
-        sqlalchemy.Column('deleted_at',
-                          sqlalchemy.DateTime()),
-        sqlalchemy.Column('deleted',
-                          sqlalchemy.Boolean(),
+        discovery.Column('updated_at',
+                          discovery.DateTime()),
+        discovery.Column('deleted_at',
+                          discovery.DateTime()),
+        discovery.Column('deleted',
+                          discovery.Boolean(),
                           nullable=False,
                           default=False,
                           index=True),
-        sqlalchemy.UniqueConstraint('image_id', 'member'),
+        discovery.UniqueConstraint('image_id', 'member'),
         extend_existing=True)
 
-    image_properties_backup = sqlalchemy.Table(
+    image_properties_backup = discovery.Table(
         'image_properties_backup',
         meta,
-        sqlalchemy.Column('id',
-                          sqlalchemy.Integer(),
+        discovery.Column('id',
+                          discovery.Integer(),
                           primary_key=True,
                           nullable=False),
-        sqlalchemy.Column('image_id',
-                          sqlalchemy.String(36),
+        discovery.Column('image_id',
+                          discovery.String(36),
                           nullable=False,
                           index=True),
-        sqlalchemy.Column('name',
-                          sqlalchemy.String(255),
+        discovery.Column('name',
+                          discovery.String(255),
                           nullable=False),
-        sqlalchemy.Column('value',
-                          sqlalchemy.Text()),
-        sqlalchemy.Column('created_at',
-                          sqlalchemy.DateTime(),
+        discovery.Column('value',
+                          discovery.Text()),
+        discovery.Column('created_at',
+                          discovery.DateTime(),
                           nullable=False),
-        sqlalchemy.Column('updated_at',
-                          sqlalchemy.DateTime()),
-        sqlalchemy.Column('deleted_at',
-                          sqlalchemy.DateTime()),
-        sqlalchemy.Column('deleted',
-                          sqlalchemy.Boolean(),
+        discovery.Column('updated_at',
+                          discovery.DateTime()),
+        discovery.Column('deleted_at',
+                          discovery.DateTime()),
+        discovery.Column('deleted',
+                          discovery.Boolean(),
                           nullable=False,
                           default=False,
                           index=True),
-        sqlalchemy.UniqueConstraint(
+        discovery.UniqueConstraint(
             'image_id', 'name',
             name='ix_image_properties_image_id_name'),
         extend_existing=True)
@@ -266,70 +266,70 @@ def _downgrade_db2(meta, t_images, t_image_members, t_image_properties):
     """
     Downgrade for DB2.
     """
-    t_images.c.id.alter(sqlalchemy.Integer(), primary_key=True)
+    t_images.c.id.alter(discovery.Integer(), primary_key=True)
 
-    image_members_old = sqlalchemy.Table(
+    image_members_old = discovery.Table(
         'image_members_old',
         meta,
-        sqlalchemy.Column('id',
-                          sqlalchemy.Integer(),
+        discovery.Column('id',
+                          discovery.Integer(),
                           primary_key=True,
                           nullable=False),
-        sqlalchemy.Column('image_id',
-                          sqlalchemy.Integer(),
+        discovery.Column('image_id',
+                          discovery.Integer(),
                           nullable=False,
                           index=True),
-        sqlalchemy.Column('member',
-                          sqlalchemy.String(255),
+        discovery.Column('member',
+                          discovery.String(255),
                           nullable=False),
-        sqlalchemy.Column('can_share',
-                          sqlalchemy.Boolean(),
+        discovery.Column('can_share',
+                          discovery.Boolean(),
                           nullable=False,
                           default=False),
-        sqlalchemy.Column('created_at',
-                          sqlalchemy.DateTime(),
+        discovery.Column('created_at',
+                          discovery.DateTime(),
                           nullable=False),
-        sqlalchemy.Column('updated_at',
-                          sqlalchemy.DateTime()),
-        sqlalchemy.Column('deleted_at',
-                          sqlalchemy.DateTime()),
-        sqlalchemy.Column('deleted',
-                          sqlalchemy.Boolean(),
+        discovery.Column('updated_at',
+                          discovery.DateTime()),
+        discovery.Column('deleted_at',
+                          discovery.DateTime()),
+        discovery.Column('deleted',
+                          discovery.Boolean(),
                           nullable=False,
                           default=False,
                           index=True),
-        sqlalchemy.UniqueConstraint('image_id', 'member'),
+        discovery.UniqueConstraint('image_id', 'member'),
         extend_existing=True)
 
-    image_properties_old = sqlalchemy.Table(
+    image_properties_old = discovery.Table(
         'image_properties_old',
         meta,
-        sqlalchemy.Column('id',
-                          sqlalchemy.Integer(),
+        discovery.Column('id',
+                          discovery.Integer(),
                           primary_key=True,
                           nullable=False),
-        sqlalchemy.Column('image_id',
-                          sqlalchemy.Integer(),
+        discovery.Column('image_id',
+                          discovery.Integer(),
                           nullable=False,
                           index=True),
-        sqlalchemy.Column('name',
-                          sqlalchemy.String(255),
+        discovery.Column('name',
+                          discovery.String(255),
                           nullable=False),
-        sqlalchemy.Column('value',
-                          sqlalchemy.Text()),
-        sqlalchemy.Column('created_at',
-                          sqlalchemy.DateTime(),
+        discovery.Column('value',
+                          discovery.Text()),
+        discovery.Column('created_at',
+                          discovery.DateTime(),
                           nullable=False),
-        sqlalchemy.Column('updated_at',
-                          sqlalchemy.DateTime()),
-        sqlalchemy.Column('deleted_at',
-                          sqlalchemy.DateTime()),
-        sqlalchemy.Column('deleted',
-                          sqlalchemy.Boolean(),
+        discovery.Column('updated_at',
+                          discovery.DateTime()),
+        discovery.Column('deleted_at',
+                          discovery.DateTime()),
+        discovery.Column('deleted',
+                          discovery.Boolean(),
                           nullable=False,
                           default=False,
                           index=True),
-        sqlalchemy.UniqueConstraint(
+        discovery.UniqueConstraint(
             'image_id', 'name',
             name='ix_image_properties_image_id_name'),
         extend_existing=True)
@@ -435,9 +435,9 @@ def _upgrade_other(t_images, t_image_members, t_image_properties, dialect):
     for fk in foreign_keys:
         fk.drop()
 
-    t_images.c.id.alter(sqlalchemy.String(36), primary_key=True)
-    t_image_members.c.image_id.alter(sqlalchemy.String(36))
-    t_image_properties.c.image_id.alter(sqlalchemy.String(36))
+    t_images.c.id.alter(discovery.String(36), primary_key=True)
+    t_image_members.c.image_id.alter(discovery.String(36))
+    t_image_properties.c.image_id.alter(discovery.String(36))
 
     _update_all_ids_to_uuids(t_images, t_image_members, t_image_properties)
 
@@ -460,7 +460,7 @@ def _downgrade_other(t_images, t_image_members, t_image_properties, dialect):
 
     t_images.c.id.alter(primary_key=True)
     # we have to use raw sql for postgresql as we have errors
-    # if we use alter type on sqlalchemy
+    # if we use alter type on discovery
     if dialect == 'postgresql':
         t_images.bind.execute('''ALTER TABLE images
                                  ALTER COLUMN id TYPE INTEGER
@@ -472,9 +472,9 @@ def _downgrade_other(t_images, t_image_members, t_image_properties, dialect):
                                  ALTER COLUMN image_id TYPE INTEGER
                                  USING (image_id::INTEGER)''')
     else:
-        t_images.c.id.alter(sqlalchemy.Integer())
-        t_image_members.c.image_id.alter(sqlalchemy.Integer())
-        t_image_properties.c.image_id.alter(sqlalchemy.Integer())
+        t_images.c.id.alter(discovery.Integer())
+        t_image_members.c.image_id.alter(discovery.Integer())
+        t_image_properties.c.image_id.alter(discovery.Integer())
 
     for fk in foreign_keys:
         fk.create()
@@ -498,8 +498,8 @@ def _sqlite_table_swap(meta, t_image_members, t_image_properties, t_images):
 
 
 def _get_table(table_name, metadata):
-    """Return a sqlalchemy Table definition with associated metadata."""
-    return sqlalchemy.Table(table_name, metadata, autoload=True)
+    """Return a discovery Table definition with associated metadata."""
+    return discovery.Table(table_name, metadata, autoload=True)
 
 
 def _get_foreign_keys(t_images, t_image_members, t_image_properties, dialect):

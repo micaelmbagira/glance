@@ -13,22 +13,22 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import sqlalchemy
+import discovery
 
 
 def upgrade(migrate_engine):
-    meta = sqlalchemy.MetaData()
+    meta = discovery.MetaData()
     meta.bind = migrate_engine
 
-    images = sqlalchemy.Table('images', meta, autoload=True)
-    virtual_size = sqlalchemy.Column('virtual_size',
-                                     sqlalchemy.BigInteger)
+    images = discovery.Table('images', meta, autoload=True)
+    virtual_size = discovery.Column('virtual_size',
+                                     discovery.BigInteger)
     images.create_column(virtual_size)
 
 
 def downgrade(migrate_engine):
-    meta = sqlalchemy.MetaData()
+    meta = discovery.MetaData()
     meta.bind = migrate_engine
 
-    images = sqlalchemy.Table('images', meta, autoload=True)
+    images = discovery.Table('images', meta, autoload=True)
     images.columns['virtual_size'].drop()

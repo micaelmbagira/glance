@@ -16,20 +16,20 @@
 import json
 import pickle
 
-import sqlalchemy
-from sqlalchemy import MetaData, Table, Column  # noqa
-from glance.db.sqlalchemy import models
+import discovery
+from discovery import MetaData, Table, Column  # noqa
+from glance.db.discovery import models
 
 
 def upgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
     image_locations = Table('image_locations', meta, autoload=True)
     new_meta_data = Column('storage_meta_data', models.JSONEncodedDict,
                            default={})
     new_meta_data.create(image_locations)
 
     noe = pickle.dumps({})
-    s = sqlalchemy.sql.select([image_locations]).where(
+    s = discovery.sql.select([image_locations]).where(
         image_locations.c.meta_data != noe)
     conn = migrate_engine.connect()
     res = conn.execute(s)
@@ -47,14 +47,14 @@ def upgrade(migrate_engine):
 
 
 def downgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
     image_locations = Table('image_locations', meta, autoload=True)
-    old_meta_data = Column('old_meta_data', sqlalchemy.PickleType(),
+    old_meta_data = Column('old_meta_data', discovery.PickleType(),
                            default={})
     old_meta_data.create(image_locations)
 
     noj = json.dumps({})
-    s = sqlalchemy.sql.select([image_locations]).where(
+    s = discovery.sql.select([image_locations]).where(
         image_locations.c.meta_data != noj)
     conn = migrate_engine.connect()
     res = conn.execute(s)

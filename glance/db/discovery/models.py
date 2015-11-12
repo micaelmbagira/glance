@@ -73,7 +73,7 @@ class GlanceBase(models.ModelBase, models.TimestampMixin):
         "created_at", "updated_at", "deleted_at", "deleted"])
 
     def save(self, session=None):
-        from glance.db.sqlalchemy import api as db_api
+        from glance.db.discovery import api as db_api
         super(GlanceBase, self).save(session or db_api.get_session())
 
     created_at = Column(DateTime, default=lambda: timeutils.utcnow(),

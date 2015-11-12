@@ -13,30 +13,30 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import sqlalchemy
+import discovery
 
-from glance.db.sqlalchemy.migrate_repo import schema
+from glance.db.discovery.migrate_repo import schema
 
 
 def upgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData()
+    meta = discovery.schema.MetaData()
     meta.bind = migrate_engine
 
-    image_locations_table = sqlalchemy.Table('image_locations',
+    image_locations_table = discovery.Table('image_locations',
                                              meta,
                                              autoload=True)
 
-    meta_data = sqlalchemy.Column('meta_data',
+    meta_data = discovery.Column('meta_data',
                                   schema.PickleType(),
                                   default={})
     meta_data.create(image_locations_table)
 
 
 def downgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData()
+    meta = discovery.schema.MetaData()
     meta.bind = migrate_engine
 
-    image_locations_table = sqlalchemy.Table('image_locations',
+    image_locations_table = discovery.Table('image_locations',
                                              meta,
                                              autoload=True)
 

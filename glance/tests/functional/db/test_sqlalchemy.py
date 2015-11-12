@@ -18,10 +18,10 @@ from oslo_config import cfg
 from oslo_db import options
 
 from glance.common import exception
-import glance.db.sqlalchemy.api
-from glance.db.sqlalchemy import models as db_models
-from glance.db.sqlalchemy import models_artifacts as artifact_models
-from glance.db.sqlalchemy import models_metadef as metadef_models
+import glance.db.discovery.api
+from glance.db.discovery import models as db_models
+from glance.db.discovery import models_artifacts as artifact_models
+from glance.db.discovery import models_metadef as metadef_models
 import glance.tests.functional.db as db_tests
 from glance.tests.functional.db import base
 from glance.tests.functional.db import base_artifacts
@@ -33,7 +33,7 @@ CONF = cfg.CONF
 def get_db(config):
     options.set_defaults(CONF, connection='sqlite://')
     config(verbose=False, debug=False)
-    db_api = glance.db.sqlalchemy.api
+    db_api = glance.db.discovery.api
     return db_api
 
 

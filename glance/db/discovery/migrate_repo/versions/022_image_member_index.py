@@ -17,9 +17,9 @@ import re
 
 from migrate.changeset import UniqueConstraint
 from oslo_db import exception as db_exception
-from sqlalchemy import and_, func, orm
-from sqlalchemy import MetaData, Table
-from sqlalchemy.exc import OperationalError, ProgrammingError
+from discovery import and_, func, orm
+from discovery import MetaData, Table
+from discovery.exc import OperationalError, ProgrammingError
 
 
 NEW_KEYNAME = 'image_members_image_id_member_deleted_at_key'

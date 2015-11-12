@@ -25,7 +25,7 @@ from glance.common import crypt
 from glance.common import exception
 import glance.context
 import glance.db
-from glance.db.sqlalchemy import api
+from glance.db.discovery import api
 import glance.tests.unit.utils as unit_test_utils
 import glance.tests.utils as test_utils
 

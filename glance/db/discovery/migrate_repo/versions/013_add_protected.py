@@ -13,7 +13,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from sqlalchemy import MetaData, Table, Column, Boolean
+from discovery import MetaData, Table, Column, Boolean
 
 
 meta = MetaData()

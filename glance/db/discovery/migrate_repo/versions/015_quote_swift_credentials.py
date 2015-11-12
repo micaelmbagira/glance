@@ -16,7 +16,7 @@
 from oslo_log import log as logging
 from oslo_utils import encodeutils
 import six.moves.urllib.parse as urlparse
-import sqlalchemy
+import discovery
 
 from glance.common import exception
 from glance import i18n
@@ -44,10 +44,10 @@ def migrate_location_credentials(migrate_engine, to_quoted):
                       unquoted to quoted form.  If False, do the
                       reverse.
     """
-    meta = sqlalchemy.schema.MetaData()
+    meta = discovery.schema.MetaData()
     meta.bind = migrate_engine
 
-    images_table = sqlalchemy.Table('images', meta, autoload=True)
+    images_table = discovery.Table('images', meta, autoload=True)
 
     images = list(images_table.select(images_table.c.location.startswith(
                                       'swift')).execute())

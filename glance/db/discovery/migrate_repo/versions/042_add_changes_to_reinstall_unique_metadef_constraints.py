@@ -12,8 +12,8 @@
 #    under the License.
 
 import migrate
-import sqlalchemy
-from sqlalchemy import (func, Index, inspect, orm, String, Table, type_coerce)
+import discovery
+from discovery import (func, Index, inspect, orm, String, Table, type_coerce)
 
 
 # The _upgrade...get_duplicate() def's are separate functions to
@@ -22,7 +22,7 @@ from sqlalchemy import (func, Index, inspect, orm, String, Table, type_coerce)
 # In addition, sqlite doesn't support the function 'concat' between
 # Strings and Integers, so, the updating of records is also adjusted.
 def _upgrade_metadef_namespaces_get_duplicates(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
     metadef_namespaces = Table('metadef_namespaces', meta, autoload=True)
 
     session = orm.sessionmaker(bind=migrate_engine)()
@@ -39,7 +39,7 @@ def _upgrade_metadef_namespaces_get_duplicates(migrate_engine):
 
 
 def _upgrade_metadef_objects_get_duplicates(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
     metadef_objects = Table('metadef_objects', meta, autoload=True)
 
     session = orm.sessionmaker(bind=migrate_engine)()
@@ -58,7 +58,7 @@ def _upgrade_metadef_objects_get_duplicates(migrate_engine):
 
 
 def _upgrade_metadef_properties_get_duplicates(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
     metadef_properties = Table('metadef_properties', meta, autoload=True)
 
     session = orm.sessionmaker(bind=migrate_engine)()
@@ -77,7 +77,7 @@ def _upgrade_metadef_properties_get_duplicates(migrate_engine):
 
 
 def _upgrade_metadef_tags_get_duplicates(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
     metadef_tags = Table('metadef_tags', meta, autoload=True)
 
     session = orm.sessionmaker(bind=migrate_engine)()
@@ -96,7 +96,7 @@ def _upgrade_metadef_tags_get_duplicates(migrate_engine):
 
 
 def _upgrade_metadef_resource_types_get_duplicates(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
     metadef_resource_types = Table('metadef_resource_types', meta,
                                    autoload=True)
 
@@ -115,7 +115,7 @@ def _upgrade_metadef_resource_types_get_duplicates(migrate_engine):
 
 def _upgrade_data(migrate_engine):
     # Rename duplicates to be unique.
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
 
     # ORM tables
     metadef_namespaces = Table('metadef_namespaces', meta, autoload=True)
@@ -319,7 +319,7 @@ def upgrade(migrate_engine):
 
     _upgrade_data(migrate_engine)
 
-    meta = sqlalchemy.MetaData()
+    meta = discovery.MetaData()
     meta.bind = migrate_engine
     inspector = inspect(migrate_engine)
 
@@ -482,7 +482,7 @@ def upgrade(migrate_engine):
 
 
 def downgrade(migrate_engine):
-    meta = sqlalchemy.MetaData()
+    meta = discovery.MetaData()
     meta.bind = migrate_engine
 
     # ORM tables

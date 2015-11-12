@@ -33,25 +33,25 @@ import uuid
 from migrate.versioning import api as migration_api
 from migrate.versioning.repository import Repository
 from oslo_config import cfg
-from oslo_db.sqlalchemy import test_base
-from oslo_db.sqlalchemy import test_migrations
-from oslo_db.sqlalchemy import utils as db_utils
+from oslo_db.discovery import test_base
+from oslo_db.discovery import test_migrations
+from oslo_db.discovery import utils as db_utils
 from oslo_serialization import jsonutils
 from oslo_utils import timeutils
 # NOTE(jokke): simplified transition to py3, behaves like py2 xrange
 from six.moves import range
-import sqlalchemy
-from sqlalchemy import inspect
+import discovery
+from discovery import inspect
 
 from glance.common import crypt
 from glance.common import exception
 from glance.common import utils
 from glance.db import migration
-from glance.db.sqlalchemy import migrate_repo
-from glance.db.sqlalchemy.migrate_repo.schema import from_migration_import
-from glance.db.sqlalchemy import models
-from glance.db.sqlalchemy import models_artifacts
-from glance.db.sqlalchemy import models_metadef
+from glance.db.discovery import migrate_repo
+from glance.db.discovery.migrate_repo.schema import from_migration_import
+from glance.db.discovery import models
+from glance.db.discovery import models_artifacts
+from glance.db.discovery import models_metadef
 
 from glance import i18n
 
@@ -62,12 +62,12 @@ CONF.import_opt('metadata_encryption_key', 'glance.common.config')
 
 
 def index_exist(index, table, engine):
-    inspector = sqlalchemy.inspect(engine)
+    inspector = discovery.inspect(engine)
     return index in [i['name'] for i in inspector.get_indexes(table)]
 
 
 def unique_constraint_exist(constraint, table, engine):
-    inspector = sqlalchemy.inspect(engine)
+    inspector = discovery.inspect(engine)
     return constraint in [c['name'] for c in
                           inspector.get_unique_constraints(table)]
 
@@ -96,34 +96,34 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
 
     def _create_unversioned_001_db(self, engine):
         # Create the initial version of the images table
-        meta = sqlalchemy.schema.MetaData()
+        meta = discovery.schema.MetaData()
         meta.bind = engine
-        images_001 = sqlalchemy.Table('images', meta,
-                                      sqlalchemy.Column('id', models.Integer,
+        images_001 = discovery.Table('images', meta,
+                                      discovery.Column('id', models.Integer,
                                                         primary_key=True),
-                                      sqlalchemy.Column('name',
-                                                        sqlalchemy.String(255)
+                                      discovery.Column('name',
+                                                        discovery.String(255)
                                                         ),
-                                      sqlalchemy.Column('type',
-                                                        sqlalchemy.String(30)),
-                                      sqlalchemy.Column('size',
-                                                        sqlalchemy.Integer),
-                                      sqlalchemy.Column('status',
-                                                        sqlalchemy.String(30)),
-                                      sqlalchemy.Column('is_public',
-                                                        sqlalchemy.Boolean,
+                                      discovery.Column('type',
+                                                        discovery.String(30)),
+                                      discovery.Column('size',
+                                                        discovery.Integer),
+                                      discovery.Column('status',
+                                                        discovery.String(30)),
+                                      discovery.Column('is_public',
+                                                        discovery.Boolean,
                                                         default=False),
-                                      sqlalchemy.Column('location',
-                                                        sqlalchemy.Text),
-                                      sqlalchemy.Column('created_at',
-                                                        sqlalchemy.DateTime(),
+                                      discovery.Column('location',
+                                                        discovery.Text),
+                                      discovery.Column('created_at',
+                                                        discovery.DateTime(),
                                                         nullable=False),
-                                      sqlalchemy.Column('updated_at',
-                                                        sqlalchemy.DateTime()),
-                                      sqlalchemy.Column('deleted_at',
-                                                        sqlalchemy.DateTime()),
-                                      sqlalchemy.Column('deleted',
-                                                        sqlalchemy.Boolean(),
+                                      discovery.Column('updated_at',
+                                                        discovery.DateTime()),
+                                      discovery.Column('deleted_at',
+                                                        discovery.DateTime()),
+                                      discovery.Column('deleted',
+                                                        discovery.Boolean(),
                                                         nullable=False,
                                                         default=False),
                                       mysql_engine='InnoDB',
@@ -697,10 +697,10 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         index = "checksum_image_idx"
         columns = ["checksum"]
 
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
-        new_table = sqlalchemy.Table(table, meta, autoload=True)
+        new_table = discovery.Table(table, meta, autoload=True)
 
         index_data = [(idx.name, idx.columns.keys())
                       for idx in new_table.indexes]
@@ -796,10 +796,10 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         index_deleted = ('ix_tasks_deleted', ['deleted'])
         index_updated_at = ('ix_tasks_updated_at', ['updated_at'])
 
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
-        tasks_table = sqlalchemy.Table(table, meta, autoload=True)
+        tasks_table = discovery.Table(table, meta, autoload=True)
 
         index_data = [(idx.name, idx.columns.keys())
                       for idx in tasks_table.indexes]
@@ -824,13 +824,13 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
                     u'deleted']
 
         # NOTE(flwang): Skip the column type checking for now since Jenkins is
-        # using sqlalchemy.dialects.postgresql.base.TIMESTAMP instead of
+        # using discovery.dialects.postgresql.base.TIMESTAMP instead of
         # DATETIME which is using by mysql and sqlite.
         col_data = [col.name for col in tasks_table.columns]
         self.assertEqual(expected, col_data)
 
     def _post_downgrade_030(self, engine):
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'tasks')
 
     def _pre_upgrade_031(self, engine):
@@ -879,7 +879,7 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertFalse(actual_locations.symmetric_difference(locations))
 
     def _pre_upgrade_032(self, engine):
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'task_info')
 
         tasks = db_utils.get_table(engine, 'tasks')
@@ -930,7 +930,7 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertNotIn('message', tasks_table.c)
 
     def _post_downgrade_032(self, engine):
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'task_info')
 
         tasks_table = db_utils.get_table(engine, 'tasks')
@@ -1030,24 +1030,24 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertNotIn('virtual_size', images.c)
 
     def _pre_upgrade_035(self, engine):
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'metadef_namespaces')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'metadef_properties')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'metadef_objects')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'metadef_resource_types')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine,
                           'metadef_namespace_resource_types')
 
     def _check_035(self, engine, data):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
         # metadef_namespaces
-        table = sqlalchemy.Table("metadef_namespaces", meta, autoload=True)
+        table = discovery.Table("metadef_namespaces", meta, autoload=True)
         index_namespace = ('ix_namespaces_namespace', ['namespace'])
         index_data = [(idx.name, idx.columns.keys())
                       for idx in table.indexes]
@@ -1066,7 +1066,7 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
         # metadef_objects
-        table = sqlalchemy.Table("metadef_objects", meta, autoload=True)
+        table = discovery.Table("metadef_objects", meta, autoload=True)
         index_namespace_id_name = (
             'ix_objects_namespace_id_name', ['namespace_id', 'name'])
         index_data = [(idx.name, idx.columns.keys())
@@ -1085,7 +1085,7 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
         # metadef_properties
-        table = sqlalchemy.Table("metadef_properties", meta, autoload=True)
+        table = discovery.Table("metadef_properties", meta, autoload=True)
         index_namespace_id_name = (
             'ix_metadef_properties_namespace_id_name',
             ['namespace_id', 'name'])
@@ -1103,7 +1103,7 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
         # metadef_resource_types
-        table = sqlalchemy.Table(
+        table = discovery.Table(
             "metadef_resource_types", meta, autoload=True)
         index_resource_types_name = (
             'ix_metadef_resource_types_name', ['name'])
@@ -1120,7 +1120,7 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
         # metadef_namespace_resource_types
-        table = sqlalchemy.Table(
+        table = discovery.Table(
             "metadef_namespace_resource_types", meta, autoload=True)
         index_ns_res_types_res_type_id_ns_id = (
             'ix_metadef_ns_res_types_res_type_id_ns_id',
@@ -1139,24 +1139,24 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
     def _post_downgrade_035(self, engine):
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'metadef_namespaces')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'metadef_properties')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'metadef_objects')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'metadef_resource_types')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine,
                           'metadef_namespace_resource_types')
 
     def _pre_upgrade_036(self, engine):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
         # metadef_objects
-        table = sqlalchemy.Table("metadef_objects", meta, autoload=True)
+        table = discovery.Table("metadef_objects", meta, autoload=True)
         expected_cols = [u'id',
                          u'namespace_id',
                          u'name',
@@ -1169,7 +1169,7 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
         # metadef_properties
-        table = sqlalchemy.Table("metadef_properties", meta, autoload=True)
+        table = discovery.Table("metadef_properties", meta, autoload=True)
         expected_cols = [u'id',
                          u'namespace_id',
                          u'name',
@@ -1180,11 +1180,11 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
     def _check_036(self, engine, data):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
         # metadef_objects
-        table = sqlalchemy.Table("metadef_objects", meta, autoload=True)
+        table = discovery.Table("metadef_objects", meta, autoload=True)
         expected_cols = [u'id',
                          u'namespace_id',
                          u'name',
@@ -1197,7 +1197,7 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
         # metadef_properties
-        table = sqlalchemy.Table("metadef_properties", meta, autoload=True)
+        table = discovery.Table("metadef_properties", meta, autoload=True)
         expected_cols = [u'id',
                          u'namespace_id',
                          u'name',
@@ -1208,11 +1208,11 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
     def _post_downgrade_036(self, engine):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
         # metadef_objects
-        table = sqlalchemy.Table("metadef_objects", meta, autoload=True)
+        table = discovery.Table("metadef_objects", meta, autoload=True)
         expected_cols = [u'id',
                          u'namespace_id',
                          u'name',
@@ -1225,7 +1225,7 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
         # metadef_properties
-        table = sqlalchemy.Table("metadef_properties", meta, autoload=True)
+        table = discovery.Table("metadef_properties", meta, autoload=True)
         expected_cols = [u'id',
                          u'namespace_id',
                          u'name',
@@ -1344,15 +1344,15 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertIsNone(image_member['status'])
 
     def _pre_upgrade_038(self, engine):
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'metadef_tags')
 
     def _check_038(self, engine, data):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
         # metadef_tags
-        table = sqlalchemy.Table("metadef_tags", meta, autoload=True)
+        table = discovery.Table("metadef_tags", meta, autoload=True)
         expected_cols = [u'id',
                          u'namespace_id',
                          u'name',
@@ -1362,23 +1362,23 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
         self.assertEqual(expected_cols, col_data)
 
     def _post_downgrade_038(self, engine):
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine, 'metadef_tags')
 
     def _check_039(self, engine, data):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
-        metadef_namespaces = sqlalchemy.Table('metadef_namespaces', meta,
+        metadef_namespaces = discovery.Table('metadef_namespaces', meta,
                                               autoload=True)
-        metadef_properties = sqlalchemy.Table('metadef_properties', meta,
+        metadef_properties = discovery.Table('metadef_properties', meta,
                                               autoload=True)
-        metadef_objects = sqlalchemy.Table('metadef_objects', meta,
+        metadef_objects = discovery.Table('metadef_objects', meta,
                                            autoload=True)
-        metadef_ns_res_types = sqlalchemy.Table(
+        metadef_ns_res_types = discovery.Table(
             'metadef_namespace_resource_types',
             meta, autoload=True)
-        metadef_resource_types = sqlalchemy.Table('metadef_resource_types',
+        metadef_resource_types = discovery.Table('metadef_resource_types',
                                                   meta, autoload=True)
 
         tables = [metadef_namespaces, metadef_properties, metadef_objects,
@@ -1418,19 +1418,19 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
                                     metadef_properties.name, engine))
 
     def _post_downgrade_039(self, engine):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
-        metadef_namespaces = sqlalchemy.Table('metadef_namespaces', meta,
+        metadef_namespaces = discovery.Table('metadef_namespaces', meta,
                                               autoload=True)
-        metadef_properties = sqlalchemy.Table('metadef_properties', meta,
+        metadef_properties = discovery.Table('metadef_properties', meta,
                                               autoload=True)
-        metadef_objects = sqlalchemy.Table('metadef_objects', meta,
+        metadef_objects = discovery.Table('metadef_objects', meta,
                                            autoload=True)
-        metadef_ns_res_types = sqlalchemy.Table(
+        metadef_ns_res_types = discovery.Table(
             'metadef_namespace_resource_types',
             meta, autoload=True)
-        metadef_resource_types = sqlalchemy.Table('metadef_resource_types',
+        metadef_resource_types = discovery.Table('metadef_resource_types',
                                                   meta, autoload=True)
 
         self.assertFalse(index_exist('ix_metadef_ns_res_types_namespace_id',
@@ -1489,31 +1489,31 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
                 'name', metadef_resource_types.name, engine))
 
     def _check_040(self, engine, data):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
-        metadef_tags = sqlalchemy.Table('metadef_tags', meta, autoload=True)
+        metadef_tags = discovery.Table('metadef_tags', meta, autoload=True)
 
         if engine.name == 'mysql':
             self.assertFalse(index_exist('namespace_id',
                              metadef_tags.name, engine))
 
     def _pre_upgrade_041(self, engine):
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine,
                           'artifacts')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine,
                           'artifact_tags')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine,
                           'artifact_properties')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine,
                           'artifact_blobs')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine,
                           'artifact_dependencies')
-        self.assertRaises(sqlalchemy.exc.NoSuchTableError,
+        self.assertRaises(discovery.exc.NoSuchTableError,
                           db_utils.get_table, engine,
                           'artifact_locations')
 
@@ -1622,19 +1622,19 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
                           locations_columns)
 
     def _pre_upgrade_042(self, engine):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
-        metadef_namespaces = sqlalchemy.Table('metadef_namespaces', meta,
+        metadef_namespaces = discovery.Table('metadef_namespaces', meta,
                                               autoload=True)
-        metadef_objects = sqlalchemy.Table('metadef_objects', meta,
+        metadef_objects = discovery.Table('metadef_objects', meta,
                                            autoload=True)
-        metadef_properties = sqlalchemy.Table('metadef_properties', meta,
+        metadef_properties = discovery.Table('metadef_properties', meta,
                                               autoload=True)
-        metadef_tags = sqlalchemy.Table('metadef_tags', meta, autoload=True)
-        metadef_resource_types = sqlalchemy.Table('metadef_resource_types',
+        metadef_tags = discovery.Table('metadef_tags', meta, autoload=True)
+        metadef_resource_types = discovery.Table('metadef_resource_types',
                                                   meta, autoload=True)
-        metadef_ns_res_types = sqlalchemy.Table(
+        metadef_ns_res_types = discovery.Table(
             'metadef_namespace_resource_types',
             meta, autoload=True)
 
@@ -1690,19 +1690,19 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
                          )
 
     def _check_042(self, engine, data):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
-        metadef_namespaces = sqlalchemy.Table('metadef_namespaces', meta,
+        metadef_namespaces = discovery.Table('metadef_namespaces', meta,
                                               autoload=True)
-        metadef_objects = sqlalchemy.Table('metadef_objects', meta,
+        metadef_objects = discovery.Table('metadef_objects', meta,
                                            autoload=True)
-        metadef_properties = sqlalchemy.Table('metadef_properties', meta,
+        metadef_properties = discovery.Table('metadef_properties', meta,
                                               autoload=True)
-        metadef_tags = sqlalchemy.Table('metadef_tags', meta, autoload=True)
-        metadef_resource_types = sqlalchemy.Table('metadef_resource_types',
+        metadef_tags = discovery.Table('metadef_tags', meta, autoload=True)
+        metadef_resource_types = discovery.Table('metadef_resource_types',
                                                   meta, autoload=True)
-        metadef_ns_res_types = sqlalchemy.Table(
+        metadef_ns_res_types = discovery.Table(
             'metadef_namespace_resource_types',
             meta, autoload=True)
 
@@ -1757,19 +1757,19 @@ class MigrationsMixin(test_migrations.WalkVersionsMixin):
                         )
 
     def _post_downgrade_042(self, engine):
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = engine
 
-        metadef_namespaces = sqlalchemy.Table('metadef_namespaces', meta,
+        metadef_namespaces = discovery.Table('metadef_namespaces', meta,
                                               autoload=True)
-        metadef_objects = sqlalchemy.Table('metadef_objects', meta,
+        metadef_objects = discovery.Table('metadef_objects', meta,
                                            autoload=True)
-        metadef_properties = sqlalchemy.Table('metadef_properties', meta,
+        metadef_properties = discovery.Table('metadef_properties', meta,
                                               autoload=True)
-        metadef_tags = sqlalchemy.Table('metadef_tags', meta, autoload=True)
-        metadef_resource_types = sqlalchemy.Table('metadef_resource_types',
+        metadef_tags = discovery.Table('metadef_tags', meta, autoload=True)
+        metadef_resource_types = discovery.Table('metadef_resource_types',
                                                   meta, autoload=True)
-        metadef_ns_res_types = sqlalchemy.Table(
+        metadef_ns_res_types = discovery.Table(
             'metadef_namespace_resource_types',
             meta, autoload=True)
 

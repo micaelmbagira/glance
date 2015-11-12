@@ -38,8 +38,8 @@ from glance.api.v1 import upload_utils
 import glance.common.config
 from glance.common import exception
 import glance.context
-from glance.db.sqlalchemy import api as db_api
-from glance.db.sqlalchemy import models as db_models
+from glance.db.discovery import api as db_api
+from glance.db.discovery import models as db_models
 import glance.registry.client.v1.api as registry
 from glance.tests.unit import base
 import glance.tests.unit.utils as unit_test_utils

@@ -30,7 +30,7 @@ from sqlalchemy.orm import joinedload
 import glance.artifacts as ga
 from glance.common import exception
 from glance.common import semver_db
-from glance.db.sqlalchemy import models_artifacts as models
+from glance.db.discovery import models_artifacts as models
 from glance import i18n
 from oslo_log import log as os_logging
 

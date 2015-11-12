@@ -28,8 +28,8 @@ import webob
 import glance.api.common
 import glance.common.config
 import glance.context
-from glance.db.sqlalchemy import api as db_api
-from glance.db.sqlalchemy import models as db_models
+from glance.db.discovery import api as db_api
+from glance.db.discovery import models as db_models
 from glance.registry.api import v2 as rserver
 from glance.tests.unit import base
 from glance.tests import utils as test_utils

@@ -56,7 +56,7 @@ class ArtifactBase(models.ModelBase, models.TimestampMixin):
                         nullable=False, onupdate=lambda: timeutils.utcnow())
 
     def save(self, session=None):
-        from glance.db.sqlalchemy import api as db_api
+        from glance.db.discovery import api as db_api
 
         super(ArtifactBase, self).save(session or db_api.get_session())
 

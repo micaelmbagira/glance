@@ -13,21 +13,21 @@
 #    under the License.
 
 import six
-import sqlalchemy
+import discovery
 
-from glance.db.sqlalchemy.migrate_repo import schema
+from glance.db.discovery.migrate_repo import schema
 
 
 def upgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData()
+    meta = discovery.schema.MetaData()
     meta.bind = migrate_engine
 
-    images_table = sqlalchemy.Table('images', meta, autoload=True)
-    image_locations_table = sqlalchemy.Table('image_locations', meta,
+    images_table = discovery.Table('images', meta, autoload=True)
+    image_locations_table = discovery.Table('image_locations', meta,
                                              autoload=True)
 
     # Create 'status' column for image_locations table
-    status = sqlalchemy.Column('status', schema.String(30),
+    status = discovery.Column('status', schema.String(30),
                                server_default='active', nullable=False)
     status.create(image_locations_table)
 
@@ -35,17 +35,17 @@ def upgrade(migrate_engine):
     mapping = {'active': 'active', 'pending_delete': 'pending_delete',
                'deleted': 'deleted', 'killed': 'deleted'}
     for src, dst in six.iteritems(mapping):
-        subq = sqlalchemy.sql.select([images_table.c.id]).where(
+        subq = discovery.sql.select([images_table.c.id]).where(
             images_table.c.status == src)
         image_locations_table.update(values={'status': dst}).where(
             image_locations_table.c.image_id.in_(subq)).execute()
 
 
 def downgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData()
+    meta = discovery.schema.MetaData()
     meta.bind = migrate_engine
 
-    image_locations_table = sqlalchemy.Table('image_locations', meta,
+    image_locations_table = discovery.Table('image_locations', meta,
                                              autoload=True)
 
     # Remove 'status' column from image_locations table

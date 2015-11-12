@@ -11,13 +11,13 @@
 #    under the License.
 
 
-import sqlalchemy
-from sqlalchemy import (Table, Index)
+import discovery
+from discovery import (Table, Index)
 
 
 def upgrade(migrate_engine):
     if migrate_engine.name == 'mysql':
-        meta = sqlalchemy.MetaData()
+        meta = discovery.MetaData()
         meta.bind = migrate_engine
         metadef_tags = Table('metadef_tags', meta, autoload=True)
         Index('namespace_id', metadef_tags.c.namespace_id,

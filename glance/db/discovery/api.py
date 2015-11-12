@@ -40,16 +40,16 @@ import sqlalchemy.sql as sa_sql
 from glance import artifacts as ga
 from glance.common import exception
 from glance.common import utils
-from glance.db.sqlalchemy import artifacts
-from glance.db.sqlalchemy.metadef_api import (resource_type
+from glance.db.discovery import artifacts
+from glance.db.discovery.metadef_api import (resource_type
                                               as metadef_resource_type_api)
-from glance.db.sqlalchemy.metadef_api import (resource_type_association
+from glance.db.discovery.metadef_api import (resource_type_association
                                               as metadef_association_api)
-from glance.db.sqlalchemy.metadef_api import namespace as metadef_namespace_api
-from glance.db.sqlalchemy.metadef_api import object as metadef_object_api
-from glance.db.sqlalchemy.metadef_api import property as metadef_property_api
-from glance.db.sqlalchemy.metadef_api import tag as metadef_tag_api
-from glance.db.sqlalchemy import models
+from glance.db.discovery.metadef_api import namespace as metadef_namespace_api
+from glance.db.discovery.metadef_api import object as metadef_object_api
+from glance.db.discovery.metadef_api import property as metadef_property_api
+from glance.db.discovery.metadef_api import tag as metadef_tag_api
+from glance.db.discovery import models
 from glance import i18n
 
 BASE = models.BASE

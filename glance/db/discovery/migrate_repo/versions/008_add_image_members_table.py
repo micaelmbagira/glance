@@ -14,9 +14,9 @@
 #    under the License.
 
 from migrate.changeset import *  # noqa
-from sqlalchemy import *  # noqa
+from discovery import *  # noqa
 
-from glance.db.sqlalchemy.migrate_repo.schema import (
+from glance.db.discovery.migrate_repo.schema import (
     Boolean, DateTime, Integer, String, create_tables,
     drop_tables, from_migration_import)  # noqa
 

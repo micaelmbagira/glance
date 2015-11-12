@@ -10,16 +10,16 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import sqlalchemy
-from sqlalchemy import Table, Index, UniqueConstraint, Sequence
-from sqlalchemy.schema import (AddConstraint, DropConstraint, CreateIndex,
+import discovery
+from discovery import Table, Index, UniqueConstraint, Sequence
+from discovery.schema import (AddConstraint, DropConstraint, CreateIndex,
                                ForeignKeyConstraint)
-from sqlalchemy import sql
-from sqlalchemy import update
+from discovery import sql
+from discovery import update
 
 
 def upgrade(migrate_engine):
-    meta = sqlalchemy.MetaData()
+    meta = discovery.MetaData()
     meta.bind = migrate_engine
 
     if migrate_engine.name not in ['mysql', 'postgresql']:
@@ -85,7 +85,7 @@ def upgrade(migrate_engine):
 
 
 def downgrade(migrate_engine):
-    meta = sqlalchemy.MetaData()
+    meta = discovery.MetaData()
     meta.bind = migrate_engine
 
     if migrate_engine.name not in ['mysql', 'postgresql']:

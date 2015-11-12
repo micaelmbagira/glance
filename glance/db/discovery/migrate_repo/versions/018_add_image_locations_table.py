@@ -13,39 +13,39 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import sqlalchemy
+import discovery
 
-from glance.db.sqlalchemy.migrate_repo import schema
+from glance.db.discovery.migrate_repo import schema
 
 
 def upgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
+    meta = discovery.schema.MetaData(migrate_engine)
 
     # NOTE(bcwaldon): load the images table for the ForeignKey below
-    sqlalchemy.Table('images', meta, autoload=True)
+    discovery.Table('images', meta, autoload=True)
 
-    image_locations_table = sqlalchemy.Table(
+    image_locations_table = discovery.Table(
         'image_locations', meta,
-        sqlalchemy.Column('id',
+        discovery.Column('id',
                           schema.Integer(),
                           primary_key=True,
                           nullable=False),
-        sqlalchemy.Column('image_id',
+        discovery.Column('image_id',
                           schema.String(36),
-                          sqlalchemy.ForeignKey('images.id'),
+                          discovery.ForeignKey('images.id'),
                           nullable=False,
                           index=True),
-        sqlalchemy.Column('value',
+        discovery.Column('value',
                           schema.Text(),
                           nullable=False),
-        sqlalchemy.Column('created_at',
+        discovery.Column('created_at',
                           schema.DateTime(),
                           nullable=False),
-        sqlalchemy.Column('updated_at',
+        discovery.Column('updated_at',
                           schema.DateTime()),
-        sqlalchemy.Column('deleted_at',
+        discovery.Column('deleted_at',
                           schema.DateTime()),
-        sqlalchemy.Column('deleted',
+        discovery.Column('deleted',
                           schema.Boolean(),
                           nullable=False,
                           default=False,
@@ -58,7 +58,7 @@ def upgrade(migrate_engine):
 
 
 def downgrade(migrate_engine):
-    meta = sqlalchemy.schema.MetaData(migrate_engine)
-    image_locations_table = sqlalchemy.Table('image_locations', meta,
+    meta = discovery.schema.MetaData(migrate_engine)
+    image_locations_table = discovery.Table('image_locations', meta,
                                              autoload=True)
     schema.drop_tables([image_locations_table])

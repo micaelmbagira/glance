@@ -12,10 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from sqlalchemy.schema import (
+from discovery.schema import (
     Column, Index, MetaData, Table, UniqueConstraint)  # noqa
 
-from glance.db.sqlalchemy.migrate_repo.schema import (
+from glance.db.discovery.migrate_repo.schema import (
     DateTime, Integer, String, create_tables, drop_tables)  # noqa
 
 

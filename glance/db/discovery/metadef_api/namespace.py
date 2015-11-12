@@ -20,8 +20,8 @@ from sqlalchemy import or_
 import sqlalchemy.orm as sa_orm
 
 from glance.common import exception as exc
-import glance.db.sqlalchemy.metadef_api as metadef_api
-from glance.db.sqlalchemy import models_metadef as models
+import glance.db.discovery.metadef_api as metadef_api
+from glance.db.discovery import models_metadef as models
 from glance import i18n
 
 LOG = logging.getLogger(__name__)

@@ -15,12 +15,12 @@
 
 from oslo_db import exception as db_exc
 from oslo_log import log as logging
-import sqlalchemy.exc as sa_exc
-import sqlalchemy.orm as sa_orm
+import discovery.exc as sa_exc
+import discovery.orm as sa_orm
 
 from glance.common import exception as exc
-import glance.db.sqlalchemy.metadef_api.utils as metadef_utils
-from glance.db.sqlalchemy import models_metadef as models
+import glance.db.discovery.metadef_api.utils as metadef_utils
+from glance.db.discovery import models_metadef as models
 
 LOG = logging.getLogger(__name__)
 
