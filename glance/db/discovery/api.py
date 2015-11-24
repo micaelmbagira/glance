@@ -242,7 +242,7 @@ def _image_get(context, image_id, session=None, force_show_deleted=False):
         if not force_show_deleted and not context.can_see_deleted:
             query = query.filter_by(deleted=False)
 
-        image = query.one()
+        image = query.first()
 
     except sa_orm.exc.NoResultFound:
         msg = "No image found with ID %s" % image_id
