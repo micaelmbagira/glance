@@ -39,6 +39,9 @@ from sqlalchemy import Text
 from sqlalchemy.types import TypeDecorator
 from sqlalchemy import UniqueConstraint
 
+from lib.rome.core.models import global_scope
+from lib.rome.core.models import Entity as GlanceBase
+
 
 BASE = declarative_base()
 
