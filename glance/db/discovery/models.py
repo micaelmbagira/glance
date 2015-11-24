@@ -50,7 +50,6 @@ BASE = declarative_base()
 def compile_big_int_sqlite(type_, compiler, **kw):
     return 'INTEGER'
 
-
 class JSONEncodedDict(TypeDecorator):
     """Represents an immutable structure as a json-encoded string"""
 
@@ -66,32 +65,6 @@ class JSONEncodedDict(TypeDecorator):
             value = jsonutils.loads(value)
         return value
 
-
-class GlanceBase(models.ModelBase, models.TimestampMixin):
-    """Base class for Glance Models."""
-
-    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_charset': 'utf8'}
-    __table_initialized__ = False
-    __protected_attributes__ = set([
-        "created_at", "updated_at", "deleted_at", "deleted"])
-
-    def save(self, session=None):
-        from glance.db.sqlalchemy import api as db_api
-        super(GlanceBase, self).save(session or db_api.get_session())
-
-    created_at = Column(DateTime, default=lambda: timeutils.utcnow(),
-                        nullable=False)
-    # TODO(vsergeyev): Column `updated_at` have no default value in
-    #                  openstack common code. We should decide, is this value
-    #                  required and make changes in oslo (if required) or
-    #                  in glance (if not).
-    updated_at = Column(DateTime, default=lambda: timeutils.utcnow(),
-                        nullable=True, onupdate=lambda: timeutils.utcnow())
-    # TODO(boris-42): Use SoftDeleteMixin instead of deleted Column after
-    #                 migration that provides UniqueConstraints and change
-    #                 type of this column.
-    deleted_at = Column(DateTime)
-    deleted = Column(Boolean, nullable=False, default=False)
 
     def delete(self, session=None):
         """Delete this object."""
@@ -117,7 +90,7 @@ class GlanceBase(models.ModelBase, models.TimestampMixin):
         d.pop("_sa_instance_state")
         return d
 
-
+@global_scope
 class Image(BASE, GlanceBase):
     """Represents an image in the datastore."""
     __tablename__ = 'images'
@@ -125,6 +98,7 @@ class Image(BASE, GlanceBase):
                       Index('ix_images_is_public', 'is_public'),
                       Index('ix_images_deleted', 'deleted'),
                       Index('owner_image_idx', 'owner'),)
+
 
     id = Column(String(36), primary_key=True,
                 default=lambda: str(uuid.uuid4()))
@@ -142,7 +116,7 @@ class Image(BASE, GlanceBase):
     protected = Column(Boolean, nullable=False, default=False,
                        server_default=sql.expression.false())
 
-
+@global_scope
 class ImageProperty(BASE, GlanceBase):
     """Represents an image properties in the datastore."""
     __tablename__ = 'image_properties'
@@ -161,7 +135,7 @@ class ImageProperty(BASE, GlanceBase):
     name = Column(String(255), nullable=False)
     value = Column(Text)
 
-
+@global_scope
 class ImageTag(BASE, GlanceBase):
     """Represents an image tag in the datastore."""
     __tablename__ = 'image_tags'
@@ -175,7 +149,7 @@ class ImageTag(BASE, GlanceBase):
     image = relationship(Image, backref=backref('tags'))
     value = Column(String(255), nullable=False)
 
-
+@global_scope
 class ImageLocation(BASE, GlanceBase):
     """Represents an image location in the datastore."""
     __tablename__ = 'image_locations'
@@ -189,7 +163,7 @@ class ImageLocation(BASE, GlanceBase):
     meta_data = Column(JSONEncodedDict(), default={})
     status = Column(String(30), server_default='active', nullable=False)
 
-
+@global_scope
 class ImageMember(BASE, GlanceBase):
     """Represents an image members in the datastore."""
     __tablename__ = 'image_members'
@@ -214,7 +188,7 @@ class ImageMember(BASE, GlanceBase):
     status = Column(String(20), nullable=False, default="pending",
                     server_default='pending')
 
-
+@global_scope
 class Task(BASE, GlanceBase):
     """Represents an task in the datastore"""
     __tablename__ = 'tasks'
@@ -231,7 +205,7 @@ class Task(BASE, GlanceBase):
     owner = Column(String(255), nullable=False)
     expires_at = Column(DateTime, nullable=True)
 
-
+@global_scope
 class TaskInfo(BASE, models.ModelBase):
     """Represents task info in the datastore"""
     __tablename__ = 'task_info'
