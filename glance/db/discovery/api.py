@@ -43,7 +43,7 @@ from glance.common import utils
 from glance.db.discovery import artifacts
 from glance.db.discovery.metadef_api import (resource_type
                                               as metadef_resource_type_api)
-from glance.db.sqlalchemy.metadef_api import (resource_type_association
+from glance.db.discovery.metadef_api import (resource_type_association
                                               as metadef_association_api)
 from glance.db.discovery.metadef_api import namespace as metadef_namespace_api
 from glance.db.discovery.metadef_api import object as metadef_object_api
