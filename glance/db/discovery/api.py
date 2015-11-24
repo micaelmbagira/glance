@@ -45,11 +45,11 @@ from glance.db.sqlalchemy.metadef_api import (resource_type
                                               as metadef_resource_type_api)
 from glance.db.sqlalchemy.metadef_api import (resource_type_association
                                               as metadef_association_api)
-from glance.db.sqlalchemy.metadef_api import namespace as metadef_namespace_api
-from glance.db.sqlalchemy.metadef_api import object as metadef_object_api
-from glance.db.sqlalchemy.metadef_api import property as metadef_property_api
-from glance.db.sqlalchemy.metadef_api import tag as metadef_tag_api
-from glance.db.sqlalchemy import models
+from glance.db.discovery.metadef_api import namespace as metadef_namespace_api
+from glance.db.discovery.metadef_api import object as metadef_object_api
+from glance.db.discovery.metadef_api import property as metadef_property_api
+from glance.db.discovery.metadef_api import tag as metadef_tag_api
+from glance.db.discovery import models
 from glance import i18n
 
 # Rome
