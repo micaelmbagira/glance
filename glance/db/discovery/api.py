@@ -223,7 +223,7 @@ def _check_image_id(image_id):
     :return: Raise NoFound exception if given image id is invalid
     """
     if (image_id and
-       len(image_id) > models.Image.id.property.columns[0].type.length):
+       len(str(image_id)) > models.Image.id.property.columns[0].type.length):
         raise exception.ImageNotFound()
 
 
