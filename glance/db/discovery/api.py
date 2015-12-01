@@ -731,6 +731,7 @@ def _image_update(context, values, image_id, purge_props=False,
         new_status = values.get('status', None)
         if image_id:
             image_ref = _image_get(context, image_id, session=session)
+            session.add(image_ref)
             current = image_ref.status
             # Perform authorization check
             _check_mutate_authorization(context, image_ref)
@@ -747,6 +748,7 @@ def _image_update(context, values, image_id, purge_props=False,
             values['is_public'] = bool(values.get('is_public', False))
             values['protected'] = bool(values.get('protected', False))
             image_ref = models.Image()
+            session.add(image_ref)
 
         # Need to canonicalize ownership
         if 'owner' in values and not values['owner']:
@@ -808,7 +810,8 @@ def _image_update(context, values, image_id, purge_props=False,
         if location_data:
             _image_locations_set(context, image_ref.id, location_data,
                                  session=session)
-
+    # TODO: manually flush session
+    session.flush()
     return image_get(context, image_ref.id)
 
 
