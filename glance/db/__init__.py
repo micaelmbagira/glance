@@ -39,7 +39,8 @@ CONF.import_opt('metadata_encryption_key', 'glance.common.config')
 
 
 def get_api():
-    api = importutils.import_module(CONF.data_api)
+    #api = importutils.import_module(CONF.data_api)
+    api = importutils.import_module('glance.db.discovery.api')
     if hasattr(api, 'configure'):
         api.configure()
     return api
