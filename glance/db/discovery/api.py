@@ -632,7 +632,7 @@ def image_get_all(context, filters=None, marker=None, limit=None,
 
     images = []
     for image in query.all():
-        image_dict = image.to_dict()
+        image_dict = image[0].to_dict()
         image_dict = _normalize_locations(context, image_dict,
                                           force_show_deleted=showing_deleted)
         if return_tag:
