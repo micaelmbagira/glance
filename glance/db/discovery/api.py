@@ -404,10 +404,10 @@ def _paginate_query(query, model, limit, sort_keys, marker=None,
                 raise ValueError(_("Unknown sort direction, "
                                    "must be 'desc' or 'asc'"))
 
-            criteria = sa_sql.and_(*crit_attrs)
+            criteria = and_(*crit_attrs)
             criteria_list.append(criteria)
 
-        f = sa_sql.or_(*criteria_list)
+        f = or_(*criteria_list)
         query = query.filter(f)
 
     if limit is not None:
@@ -503,7 +503,7 @@ def _select_images_query(context, image_conditions, admin_as_user,
                          member_status, visibility):
     session = get_session()
 
-    img_conditional_clause = sa_sql.and_(*image_conditions)
+    img_conditional_clause = and_(*image_conditions)
 
     regular_user = (not context.is_admin) or admin_as_user
 
@@ -516,7 +516,7 @@ def _select_images_query(context, image_conditions, admin_as_user,
             if member_status != 'all':
                 member_filters.extend([
                     models.ImageMember.status == member_status])
-        query_member = query_member.filter(sa_sql.and_(*member_filters))
+        query_member = query_member.filter(and_(*member_filters))
 
     # NOTE(venkatesh) if the 'visibility' is set to 'shared', we just
     # query the image members table. No union is required.
@@ -600,12 +600,12 @@ def image_get_all(context, filters=None, marker=None, limit=None,
     if prop_cond:
         for prop_condition in prop_cond:
             query = query.join(models.ImageProperty, aliased=True).filter(
-                sa_sql.and_(*prop_condition))
+                and_(*prop_condition))
 
     if tag_cond:
         for tag_condition in tag_cond:
             query = query.join(models.ImageTag, aliased=True).filter(
-                sa_sql.and_(*tag_condition))
+                and_(*tag_condition))
 
     marker_image = None
     if marker is not None:
@@ -1121,7 +1121,7 @@ def _image_member_find(context, session, image_id=None,
             models.Image.owner == context.owner,
             models.ImageMember.member == context.owner,
         ]
-        query = query.filter(sa_sql.or_(*filters))
+        query = query.filter(or_(*filters))
 
     if image_id is not None:
         query = query.filter(models.ImageMember.image_id == image_id)
